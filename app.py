@@ -23,11 +23,10 @@ client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 # ================= APP INIT ================= #
 app = Flask(__name__)
 app.secret_key = "secretkey"
-CORS(app)
 # ================= CONFIG ================= #
 
 CORS(app, supports_credentials=True,
-     resources={r"/*": {"origins": "*"}})
+     origins=["https://brain-tumor-frontend-dun.vercel.app"])
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config["SESSION_TYPE"] = "filesystem"
@@ -35,7 +34,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_USE_SIGNER"] = True
 app.config["SESSION_FILE_DIR"] = "./flask_session"
 app.config["SESSION_COOKIE_NAME"] = "neuroscan_session"
-app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SAMESITE"] = "None"
 app.config["SESSION_COOKIE_SECURE"] = False
 
 Session(app)
