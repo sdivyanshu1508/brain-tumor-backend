@@ -35,7 +35,7 @@ app.config["SESSION_USE_SIGNER"] = True
 app.config["SESSION_FILE_DIR"] = "./flask_session"
 app.config["SESSION_COOKIE_NAME"] = "neuroscan_session"
 app.config["SESSION_COOKIE_SAMESITE"] = "None"
-app.config["SESSION_COOKIE_SECURE"] = False
+app.config["SESSION_COOKIE_SECURE"] = True
 
 Session(app)
 db.init_app(app)
