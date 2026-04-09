@@ -1,0 +1,7 @@
+flask
+flask-cors
+flask-session
+gunicorn
+tensorflow
+opencv-python
+numpy
