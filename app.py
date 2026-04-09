@@ -26,7 +26,7 @@ app.secret_key = "secretkey"
 # ================= CONFIG ================= #
 
 CORS(app, supports_credentials=True,
-     origins=["https://brain-tumor-frontend-dun.vercel.app"])
+      origins=["https://brain-tumor-frontend-git-main-sdivyanshu1508s-projects.vercel.app"])
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config["SESSION_TYPE"] = "filesystem"
