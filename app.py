@@ -15,8 +15,8 @@ from datetime import datetime, timedelta
 import numpy as np
 import razorpay
 
-RAZORPAY_KEY_ID = os.environ.get("rzp_test_SYwfzTGxdSXCdN")
-RAZORPAY_KEY_SECRET = os.environ.get("BEPVfY6MPcNpLWoCl0uu6tp1")
+RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET")
 
 client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
@@ -27,7 +27,7 @@ CORS(app)
 # ================= CONFIG ================= #
 
 CORS(app, supports_credentials=True,
-     resources={r"/*": {"origins": "http://localhost:3000"}})
+     resources={r"/*": {"origins": "*"}})
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config["SESSION_TYPE"] = "filesystem"
