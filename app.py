@@ -15,8 +15,8 @@ from datetime import datetime, timedelta
 import numpy as np
 import razorpay
 
-RAZORPAY_KEY_ID = "rzp_test_SYwfzTGxdSXCdN"
-RAZORPAY_KEY_SECRET = "BEPVfY6MPcNpLWoCl0uu6tp1"
+RAZORPAY_KEY_ID = os.environ.get("rzp_test_SYwfzTGxdSXCdN")
+RAZORPAY_KEY_SECRET = os.environ.get("BEPVfY6MPcNpLWoCl0uu6tp1")
 
 client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
@@ -44,7 +44,6 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-load_models()
 # ================= FILE STORAGE ================= #
 
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
@@ -578,4 +577,5 @@ def home():
 # ================= RUN ================= #
 
 if __name__ == "__main__":
-    app.run(debug=True, use_reloader=False)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)

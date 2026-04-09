@@ -77,8 +77,11 @@ deeplab_model = None
 def load_models():
     global cnn_model, deeplab_model
 
-    cnn_model = load_model("best_model.h5", compile=False)
-    deeplab_model = load_model("deeplab_final.keras", compile=False)
+    if cnn_model is None:
+        cnn_model = load_model("best_model.h5", compile=False)
+
+    if deeplab_model is None:
+        deeplab_model = load_model("deeplab_final.keras", compile=False)
     print("DEEPLAB MODEL:", type(deeplab_model))
 # ================= PREPROCESS ================= #
 
@@ -91,6 +94,7 @@ def preprocess_cnn(path):
 # ================= CLASSIFICATION ================= #
 
 def detect_tumor(img):
+    load_models()
     pred = cnn_model.predict(img, verbose=0)[0]
 
     class_names = ['glioma', 'meningioma', 'notumor', 'pituitary']
@@ -104,6 +108,7 @@ def detect_tumor(img):
 # ================= SEGMENTATION ================= #
 
 def segment_tumor(image_path):
+    load_models()
     original = cv2.imread(image_path)
 
     if original is None:
