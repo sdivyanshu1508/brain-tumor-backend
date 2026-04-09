@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify, session, send_from_directory
 from flask_session import Session
 from flask_cors import CORS
-CORS(app)
 from datetime import datetime
 from functools import wraps
 import os
@@ -24,7 +23,7 @@ client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 # ================= APP INIT ================= #
 app = Flask(__name__)
 app.secret_key = "secretkey"
-
+CORS(app)
 # ================= CONFIG ================= #
 
 CORS(app, supports_credentials=True,
