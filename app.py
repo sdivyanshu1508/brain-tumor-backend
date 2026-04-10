@@ -56,6 +56,7 @@ PLANS = {
     "6months": 180,
     "12months": 365
 }
+
 # ================= AUTH DECORATOR ================= #
 
 def admin_required(f):

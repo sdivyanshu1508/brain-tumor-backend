@@ -6,6 +6,7 @@ import numpy as np
 import tensorflow as tf
 from flask_sqlalchemy import SQLAlchemy
 from PIL import Image
+import requests
 
 db = SQLAlchemy()
 
@@ -46,6 +47,14 @@ class Prediction(db.Model):
     patient_id = db.Column(db.String(50))
     tumor_area = db.Column(db.Float)
 
+#============download==========#
+def download_file(url, path):
+    if not os.path.exists(path):
+        print(f"Downloading {path}...")
+        r = requests.get(url)
+        with open(path, "wb") as f:
+            f.write(r.content)    
+
 # ================= CUSTOM LOSSES (DEFINE FIRST) ================= #
 
 def focal_loss(y_true, y_pred):
@@ -77,12 +86,19 @@ deeplab_model = None
 def load_models():
     global cnn_model, deeplab_model
 
+    # 🔗 PUT YOUR REAL LINKS HERE
+    CNN_URL = "https://drive.google.com/file/d/14iBdJxz3gbo87YYfY5REkgIGtv62V6WI/view?usp=sharing"
+    DEEPLAB_URL = "https://drive.google.com/file/d/1jS7rmvX_pLlGrxeQVxZRe5EL8dXLHx_E/view?usp=sharing"
+
     if cnn_model is None:
+        download_file(CNN_URL, "best_model.h5")
         cnn_model = load_model("best_model.h5", compile=False)
 
     if deeplab_model is None:
+        download_file(DEEPLAB_URL, "deeplab_final.keras")
         deeplab_model = load_model("deeplab_final.keras", compile=False)
-    print("DEEPLAB MODEL:", type(deeplab_model))
+
+    print("✅ Models loaded successfully")
 # ================= PREPROCESS ================= #
 
 def preprocess_cnn(path):
