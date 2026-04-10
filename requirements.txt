@@ -8,3 +8,4 @@ numpy
 Flask-SQLAlchemy==3.1.1
 Pillow==10.3.0
 razorpay==1.4.2
+gradio_client
