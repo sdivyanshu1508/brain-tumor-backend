@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+from gradio_client import Client
+from PIL import Image
 import os
 import numpy as np
 import base64
@@ -46,16 +48,17 @@ class Prediction(db.Model):
     tumor_area = db.Column(db.Float)
 
 #============Api Calling==========#
-HF_API = "https://sdivyanshu1508-brain-tumor-api.hf.space/api/predict/"
+client = Client("sdivyanshu1508/brain-tumor-api")
 
 def call_hf_api(image_path):
-    with open(image_path, "rb") as f:
-        response = requests.post(
-            "https://sdivyanshu1508-brain-tumor-api.hf.space/api/predict/",
-            files={"image": f}
-        )
+    result = client.predict(
+        image=Image.open(image_path),
+        api_name="/predict"
+    )
 
-    print("STATUS:", response.status_code)
-    print("TEXT:", response.text)
+    print("HF RESULT:", result)
 
-    return response.json()
+    # 🔥 HANDLE BOTH CASES
+    if isinstance(result, list):
+        return result[0]
+    return result
