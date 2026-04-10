@@ -420,7 +420,7 @@ def predict_route():
         confidence = data["confidence"]
         has_tumor = data["tumor"]
         tumor_area = data.get("tumor_area", 0)
-        segmented_filename = None
+        segmented_filename = None 
 
         # ===== SAVE =====
         new_prediction = Prediction(
