@@ -46,7 +46,7 @@ class Prediction(db.Model):
     tumor_area = db.Column(db.Float)
 
 #============Api Calling==========#
-HF_API = "https://sdivyanshu1508-brain-tumor-api.hf.space/api/predict"
+HF_API = "https://sdivyanshu1508-brain-tumor-api.hf.space/run/predict"
 
 def call_hf_api(image_path):
     with open(image_path, "rb") as f:
@@ -58,7 +58,7 @@ def call_hf_api(image_path):
     }
 
     response = requests.post(
-        "https://sdivyanshu1508-brain-tumor-api.hf.space/api/predict",
+        "https://sdivyanshu1508-brain-tumor-api.hf.space/run/predict",
         json=payload
     )
 
