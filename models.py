@@ -119,7 +119,6 @@ def preprocess_cnn(path):
 # ================= CLASSIFICATION ================= #
 
 def detect_tumor(img):
-    load_models()
     pred = cnn_model.predict(img, verbose=0)[0]
 
     class_names = ['glioma', 'meningioma', 'notumor', 'pituitary']
@@ -133,7 +132,6 @@ def detect_tumor(img):
 # ================= SEGMENTATION ================= #
 
 def segment_tumor(image_path):
-    load_models()
     original = cv2.imread(image_path)
 
     if original is None:
