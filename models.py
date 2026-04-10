@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import os
 import numpy as np
+import base64
 from flask_sqlalchemy import SQLAlchemy
 from PIL import Image
 import requests
@@ -45,13 +46,16 @@ class Prediction(db.Model):
     tumor_area = db.Column(db.Float)
 
 #============Api Calling==========#
-HF_API = "https://sdivyanshu1508-brain-tumor-api.hf.space/run/predict"
+HF_API = "https://sdivyanshu1508-brain-tumor-api.hf.space/api/predict"
 
 def call_hf_api(image_path):
     with open(image_path, "rb") as f:
-        response = requests.post(
-            HF_API,
-            files={"data": ("image.png", f, "image/png")}
-        )
+        img_base64 = base64.b64encode(f.read()).decode()
+
+    payload = {
+        "data": [img_base64]
+    }
+
+    response = requests.post(HF_API, json=payload)
 
     return response.json()
