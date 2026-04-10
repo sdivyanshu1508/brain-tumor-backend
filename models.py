@@ -59,16 +59,23 @@ def call_hf_api(image_path):
 
     print("HF RAW RESULT:", result)
 
-    # ✅ CASE 1: If result is list
+    # ✅ CASE 1: tuple (image, dict)
+    if isinstance(result, tuple):
+        result = result[1]
+
+    # ✅ CASE 2: list
     if isinstance(result, list):
         result = result[0]
 
-    # ✅ CASE 2: If result contains image
-    if isinstance(result, tuple):
-        result = result[1]   # skip image, keep JSON
+    # ✅ CASE 3: segmented_image is PIL → convert to base64
+    if isinstance(result.get("segmented_image"), Image.Image):
+        buffered = BytesIO()
+        result["segmented_image"].save(buffered, format="PNG")
+        result["segmented_image"] = base64.b64encode(buffered.getvalue()).decode()
 
-    # ✅ FINAL SAFETY
-    if not isinstance(result, dict):
-        raise Exception("Invalid HF response format")
+    # ✅ FINAL CLEAN (VERY IMPORTANT)
+    for key in result:
+        if isinstance(result[key], Image.Image):
+            result[key] = None   # remove any leftover images
 
     return result
