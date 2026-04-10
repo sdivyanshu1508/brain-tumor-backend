@@ -6,13 +6,10 @@ from functools import wraps
 import os
 import uuid
 import random
-import tensorflow as tf
-from models import db, User, Prediction, segment_tumor, detect_tumor, load_models
+from models import db, User, Prediction, call_hf_api
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from PIL import Image
 from datetime import datetime, timedelta
-import numpy as np
 import razorpay
 
 RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID")
@@ -66,14 +63,6 @@ def admin_required(f):
             return jsonify({"error": "Admin only"}), 403
         return f(*args, **kwargs)
     return wrapper
-
-# ================= PREPROCESS ================= #
-
-def preprocess_cnn(path):
-    img = Image.open(path).convert("RGB")
-    img = img.resize((224, 224))
-    img = np.array(img) / 255.0
-    return np.expand_dims(img, axis=0)
 
 # ================= Subscription end ================= #
 def check_subscription():
@@ -424,16 +413,14 @@ def predict_route():
         file.save(path)
 
         # ===== CLASSIFICATION =====
-        img_cnn = preprocess_cnn(path)
-        has_tumor, result, confidence = detect_tumor(img_cnn)
+        hf_response = call_hf_api(path)
+        data = hf_response["data"][0]
 
+        result = data["result"]
+        confidence = data["confidence"]
+        has_tumor = data["tumor"]
+        tumor_area = data.get("tumor_area", 0)
         segmented_filename = None
-        tumor_area = 0
-
-        # ===== SEGMENTATION =====
-        if has_tumor:
-            segmented_path, tumor_area = segment_tumor(path)
-            segmented_filename = os.path.basename(segmented_path)
 
         # ===== SAVE =====
         new_prediction = Prediction(
