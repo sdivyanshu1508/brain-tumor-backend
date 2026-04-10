@@ -51,9 +51,12 @@ class Prediction(db.Model):
 def download_file(url, path):
     if not os.path.exists(path):
         print(f"Downloading {path}...")
-        r = requests.get(url)
+        r = requests.get(url, stream=True)
+
         with open(path, "wb") as f:
-            f.write(r.content)    
+            for chunk in r.iter_content(1024):
+                if chunk:
+                    f.write(chunk)    
 
 # ================= CUSTOM LOSSES (DEFINE FIRST) ================= #
 
@@ -87,8 +90,8 @@ def load_models():
     global cnn_model, deeplab_model
 
     # 🔗 PUT YOUR REAL LINKS HERE
-    CNN_URL = "https://drive.google.com/file/d/14iBdJxz3gbo87YYfY5REkgIGtv62V6WI/view?usp=sharing"
-    DEEPLAB_URL = "https://drive.google.com/file/d/1jS7rmvX_pLlGrxeQVxZRe5EL8dXLHx_E/view?usp=sharing"
+    CNN_URL = "https://drive.google.com/uc?export=download&id=14iBdJxz3gbo87YYfY5REkgIGtv62V6WI"
+    DEEPLAB_URL = "https://drive.google.com/uc?export=download&id=1jS7rmvX_pLlGrxeQVxZRe5EL8dXLHx_E"
 
     if cnn_model is None:
         download_file(CNN_URL, "best_model.h5")
