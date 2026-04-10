@@ -405,7 +405,7 @@ def update_account():
 # ================= PREDICT ================= #
 
 @app.route("/predict", methods=["POST"])
-@subscription_required
+#@subscription_required
 def predict_route():
     try:
         if "user_id" not in session:
@@ -466,7 +466,7 @@ def predict_route():
     
 #=================Save======================#
 @app.route("/save", methods=["POST"])
-@subscription_required
+#@subscription_required
 def save():
     if "user_id" not in session:
         return jsonify({"error": "Unauthorized"}), 401
@@ -520,7 +520,7 @@ def history():
 # ================= FILE SERVE ================= #
 
 @app.route("/uploads/<filename>")
-@subscription_required
+#@subscription_required
 def uploaded_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
