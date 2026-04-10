@@ -51,12 +51,18 @@ class Prediction(db.Model):
 def download_file(url, path):
     if not os.path.exists(path):
         print(f"Downloading {path}...")
+
         r = requests.get(url, stream=True)
 
+        if r.status_code != 200:
+            raise Exception("Download failed!")
+
         with open(path, "wb") as f:
-            for chunk in r.iter_content(1024):
+            for chunk in r.iter_content(1024 * 1024):
                 if chunk:
-                    f.write(chunk)    
+                    f.write(chunk)
+
+        print(f"{path} downloaded successfully")   
 
 # ================= CUSTOM LOSSES (DEFINE FIRST) ================= #
 
@@ -90,8 +96,8 @@ def load_models():
     global cnn_model, deeplab_model
 
     # 🔗 PUT YOUR REAL LINKS HERE
-    CNN_URL = "https://drive.google.com/uc?export=download&id=14iBdJxz3gbo87YYfY5REkgIGtv62V6WI"
-    DEEPLAB_URL = "https://drive.google.com/uc?export=download&id=1jS7rmvX_pLlGrxeQVxZRe5EL8dXLHx_E"
+    CNN_URL = "https://huggingface.co/sdivyanshu1508/brain-tumor-model/resolve/main/best_model.h5"
+    DEEPLAB_URL = "https://huggingface.co/sdivyanshu1508/brain-tumor-model/resolve/main/deeplab_final.keras"
 
     if cnn_model is None:
         download_file(CNN_URL, "best_model.h5")
