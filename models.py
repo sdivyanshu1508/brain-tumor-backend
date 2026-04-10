@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from gradio_client import Client
 from PIL import Image
+from io import BytesIO
 import os
 import numpy as np
 import base64
@@ -58,7 +59,14 @@ def call_hf_api(image_path):
 
     print("HF RESULT:", result)
 
-    # 🔥 HANDLE BOTH CASES
+    # 🔥 HANDLE LIST RESPONSE
     if isinstance(result, list):
-        return result[0]
+        result = result[0]
+
+    # 🔥 FIX IMAGE SERIALIZATION
+    if isinstance(result.get("segmented_image"), Image.Image):
+        buffered = BytesIO()
+        result["segmented_image"].save(buffered, format="PNG")
+        result["segmented_image"] = base64.b64encode(buffered.getvalue()).decode()
+
     return result
