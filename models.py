@@ -51,7 +51,7 @@ def call_hf_api(image_path):
     with open(image_path, "rb") as f:
         response = requests.post(
             HF_API,
-            files={"data": f}
+            files={"data": ("image.png", f, "image/png")}
         )
 
     return response.json()

@@ -3,6 +3,7 @@ from flask_session import Session
 from flask_cors import CORS
 from datetime import datetime
 from functools import wraps
+import base64
 import os
 import uuid
 import random
@@ -412,16 +413,29 @@ def predict_route():
         path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         file.save(path)
 
-        # ===== CLASSIFICATION =====
+        # ===== CLASSIFICATION =====# 
         hf_response = call_hf_api(path)
-        data = hf_response["data"][0]
 
-        result = data["result"]
-        confidence = data["confidence"]
-        has_tumor = data["tumor"]
-        tumor_area = data.get("tumor_area", 0)
-        segmented_filename = None 
+        print("HF RAW RESPONSE:", hf_response)
 
+        # If HF wraps response inside "data"
+        if "data" in hf_response:
+            hf_response = hf_response["data"][0]
+
+        result = hf_response.get("result", "unknown")
+        confidence = float(hf_response.get("confidence") or 0)
+        has_tumor = bool(hf_response.get("tumor", False))
+        tumor_area = int(hf_response.get("tumor_area") or 0)
+
+        segmented_filename = None
+
+        if hf_response.get("segmented_image"):
+         img_data = base64.b64decode(hf_response["segmented_image"])
+         segmented_filename = f"seg_{uuid.uuid4()}.png"
+
+         with open(os.path.join(app.config["UPLOAD_FOLDER"], segmented_filename), "wb") as f:
+          f.write(img_data)
+        
         # ===== SAVE =====
         new_prediction = Prediction(
             user_id=session["user_id"],
