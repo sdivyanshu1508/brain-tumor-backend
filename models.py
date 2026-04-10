@@ -46,9 +46,12 @@ class Prediction(db.Model):
     tumor_area = db.Column(db.Float)
 
 #============Api Calling==========#
-HF_API = "https://sdivyanshu1508-brain-tumor-api.hf.space/run/predict"
+HF_API = "https://sdivyanshu1508-brain-tumor-api.hf.space/call/predict"
 
 def call_hf_api(image_path):
+    import base64
+    import requests
+
     with open(image_path, "rb") as f:
         img_bytes = f.read()
         img_base64 = base64.b64encode(img_bytes).decode()
@@ -58,8 +61,11 @@ def call_hf_api(image_path):
     }
 
     response = requests.post(
-        "https://sdivyanshu1508-brain-tumor-api.hf.space/run/predict",
+        "https://sdivyanshu1508-brain-tumor-api.hf.space/call/predict",  # ✅ FINAL FIX
         json=payload
     )
+
+    print("HF STATUS:", response.status_code)
+    print("HF RESPONSE:", response.text)
 
     return response.json()
