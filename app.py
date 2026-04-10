@@ -415,7 +415,8 @@ def predict_route():
 
         # ===== CLASSIFICATION =====# 
         hf_response = call_hf_api(path)
-
+        if not isinstance(hf_response, dict):
+         return jsonify({"error": "Invalid API response"}), 500
         print("HF RAW RESPONSE:", hf_response)
 
         # If HF wraps response inside "data"

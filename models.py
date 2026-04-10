@@ -57,16 +57,18 @@ def call_hf_api(image_path):
         api_name="/predict"
     )
 
-    print("HF RESULT:", result)
+    print("HF RAW RESULT:", result)
 
-    # 🔥 HANDLE LIST RESPONSE
+    # ✅ CASE 1: If result is list
     if isinstance(result, list):
         result = result[0]
 
-    # 🔥 FIX IMAGE SERIALIZATION
-    if isinstance(result.get("segmented_image"), Image.Image):
-        buffered = BytesIO()
-        result["segmented_image"].save(buffered, format="PNG")
-        result["segmented_image"] = base64.b64encode(buffered.getvalue()).decode()
+    # ✅ CASE 2: If result contains image
+    if isinstance(result, tuple):
+        result = result[1]   # skip image, keep JSON
+
+    # ✅ FINAL SAFETY
+    if not isinstance(result, dict):
+        raise Exception("Invalid HF response format")
 
     return result
