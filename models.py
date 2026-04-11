@@ -68,10 +68,11 @@ def call_hf_api(image_path):
 
         client = Client("sdivyanshu1508/brain-tumor-api")
 
-        result = client.predict(
-            image={"path": image_path},   # ✅ FIX HERE
-            api_name="/predict"
-        )
+        with open(image_path, "rb") as f:
+            result = client.predict(
+                image=f,   # ✅ FIX HERE
+                api_name="/predict"
+            )
 
         print("HF RAW RESULT:", result)
         print("TYPE:", type(result))
