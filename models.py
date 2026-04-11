@@ -68,26 +68,20 @@ def call_hf_api(image_path):
 
         client = Client("sdivyanshu1508/brain-tumor-api")
 
-        # ✅ Open image properly
-        img = Image.open(image_path).convert("RGB")
-
-        # ✅ Call API correctly
         result = client.predict(
-            image=img,
+            image={"path": image_path},   # ✅ FIX HERE
             api_name="/predict"
         )
 
         print("HF RAW RESULT:", result)
         print("TYPE:", type(result))
 
-        # ✅ Normalize structure
         if isinstance(result, tuple):
             result = result[1]
 
         if isinstance(result, list):
             result = result[0]
 
-        # ✅ Convert PIL images to base64
         if isinstance(result, dict):
             for key, value in result.items():
                 if isinstance(value, Image.Image):
