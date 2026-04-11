@@ -62,12 +62,12 @@ def clean_for_json(obj):
         return obj
 
 #============Api Calling==========#
-client = Client("sdivyanshu1508/brain-tumor-api")
 
 def call_hf_api(image_path):
     try:
         print("CALLING HF API")
-
+        client = Client("sdivyanshu1508/brain-tumor-api")
+        
         result = client.predict(
             image=Image.open(image_path),
             api_name="/predict"
