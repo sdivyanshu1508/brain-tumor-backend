@@ -8,3 +8,4 @@ gradio_client
 Pillow
 requests
 gunicorn
+numpy
