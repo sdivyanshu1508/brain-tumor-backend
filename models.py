@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from gradio_client import Client
+from gradio_client import Client, file
 from io import BytesIO
 import os
 import numpy as np
@@ -68,11 +68,10 @@ def call_hf_api(image_path):
 
         client = Client("sdivyanshu1508/brain-tumor-api")
 
-        with open(image_path, "rb") as f:
-            result = client.predict(
-                image={"name": "image.jpg", "data": f.read()},  # ✅ FINAL FIX
-                api_name="/predict"
-            )
+        result = client.predict(
+            image=file(image_path),   # ✅ THIS IS THE REAL FIX
+            api_name="/predict"
+        )
 
         print("HF RAW RESULT:", result)
 
@@ -81,13 +80,6 @@ def call_hf_api(image_path):
 
         if isinstance(result, list):
             result = result[0]
-
-        if isinstance(result, dict):
-            for key, value in result.items():
-                if isinstance(value, Image.Image):
-                    buffered = BytesIO()
-                    value.save(buffered, format="PNG")
-                    result[key] = base64.b64encode(buffered.getvalue()).decode()
 
         return clean_for_json(result)
 
