@@ -70,7 +70,7 @@ def call_hf_api(image_path):
 
         with open(image_path, "rb") as f:
             result = client.predict(
-                image=f,   # ✅ FIX HERE
+                image=("image.jpg", f.read()),   # ✅ FINAL FIX
                 api_name="/predict"
             )
 
