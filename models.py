@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 from gradio_client import Client
-from PIL import Image
 from io import BytesIO
 import os
 import numpy as np
@@ -70,21 +69,19 @@ def call_hf_api(image_path):
         client = Client("sdivyanshu1508/brain-tumor-api")
 
         result = client.predict(
-            image=Image.open(image_path),
+            image=image_path,   # ✅ FIXED
             api_name="/predict"
         )
 
         print("HF RAW RESULT:", result)
         print("TYPE:", type(result))
 
-        # ✅ Normalize structure
         if isinstance(result, tuple):
             result = result[1]
 
         if isinstance(result, list):
             result = result[0]
 
-        # ✅ FIX: handle image safely
         if isinstance(result, dict):
             for key, value in result.items():
                 if isinstance(value, Image.Image):
