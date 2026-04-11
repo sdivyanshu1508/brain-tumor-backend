@@ -68,14 +68,12 @@ def call_hf_api(image_path):
 
         client = Client("sdivyanshu1508/brain-tumor-api")
 
-        with open(image_path, "rb") as f:
-            result = client.predict(
-                image=("image.jpg", f.read()),   # ✅ FINAL FIX
-                api_name="/predict"
-            )
+        result = client.predict(
+            image=image_path,   # ✅ FIXED
+            api_name="/predict"
+        )
 
         print("HF RAW RESULT:", result)
-        print("TYPE:", type(result))
 
         if isinstance(result, tuple):
             result = result[1]
@@ -90,11 +88,7 @@ def call_hf_api(image_path):
                     value.save(buffered, format="PNG")
                     result[key] = base64.b64encode(buffered.getvalue()).decode()
 
-        result = clean_for_json(result)
-
-        print("FINAL RESPONSE:", result)
-
-        return result
+        return clean_for_json(result)
 
     except Exception as e:
         print("HF API ERROR:", str(e))
