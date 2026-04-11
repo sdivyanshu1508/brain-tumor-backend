@@ -41,6 +41,15 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+    if not User.query.filter_by(username="admin").first():
+        admin = User(
+            username="admin",
+            password=generate_password_hash("admin123"),
+            role="admin"
+        )
+        db.session.add(admin)
+        db.session.commit()
+        print("Admin auto-created")
 # ================= FILE STORAGE ================= #
 
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
@@ -54,6 +63,7 @@ PLANS = {
     "6months": 180,
     "12months": 365
 }
+
 
 # ================= AUTH DECORATOR ================= #
 
