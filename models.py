@@ -48,6 +48,19 @@ class Prediction(db.Model):
     patient_id = db.Column(db.String(50))
     tumor_area = db.Column(db.Float)
 
+# ================= CLEAN FUNCTION ================= #
+def clean_for_json(obj):
+    if isinstance(obj, dict):
+        return {k: clean_for_json(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [clean_for_json(v) for v in obj]
+    elif isinstance(obj, tuple):
+        return tuple(clean_for_json(v) for v in obj)
+    elif isinstance(obj, Image.Image):
+        return None
+    else:
+        return obj
+
 #============Api Calling==========#
 client = Client("sdivyanshu1508/brain-tumor-api")
 
@@ -74,8 +87,9 @@ def call_hf_api(image_path):
         result["segmented_image"] = base64.b64encode(buffered.getvalue()).decode()
 
     # ✅ FINAL CLEAN (VERY IMPORTANT)
-    for key in result:
-        if isinstance(result[key], Image.Image):
-            result[key] = None   # remove any leftover images
+    result = clean_for_json(result)
 
+    # ✅ DEBUG PRINT
+    print("FINAL RESPONSE:", result)
+    
     return result
