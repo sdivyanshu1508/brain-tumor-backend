@@ -7,7 +7,7 @@ import base64
 import os
 import uuid
 import random
-from models import db, User, Prediction, call_hf_api
+from models import db, User, Prediction, call_hf_api, clean_for_json
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
@@ -414,9 +414,11 @@ def predict_route():
         file.save(path)
 
         # ===== CLASSIFICATION =====# 
+        print("STEP 1: Before HF API")
         hf_response = call_hf_api(path)
         print("HF RAW RESPONSE:", hf_response)
-        
+        print("STEP 2: After HF API", hf_response)
+
         if not isinstance(hf_response, dict):
          return jsonify({"error": "Invalid API response"}), 500
 
@@ -453,7 +455,7 @@ def predict_route():
         db.session.add(new_prediction)
         db.session.commit()
 
-        return jsonify({
+        return jsonify(clean_for_json({
             "id": new_prediction.id,
             "result": result,
             "confidence": confidence,
@@ -461,7 +463,7 @@ def predict_route():
             "segmented_image": segmented_filename,
             "tumor_area": tumor_area,
             "tumor": has_tumor
-        })
+        }))
 
     except Exception as e:
         print("ERROR:", str(e))

@@ -65,31 +65,33 @@ def clean_for_json(obj):
 client = Client("sdivyanshu1508/brain-tumor-api")
 
 def call_hf_api(image_path):
-    result = client.predict(
-        image=Image.open(image_path),
-        api_name="/predict"
-    )
+    try:
+        print("CALLING HF API")
 
-    print("HF RAW RESULT:", result)
+        result = client.predict(
+            image=Image.open(image_path),
+            api_name="/predict"
+        )
 
-    # ✅ CASE 1: tuple (image, dict)
-    if isinstance(result, tuple):
-        result = result[1]
+        print("HF RAW RESULT:", result)
 
-    # ✅ CASE 2: list
-    if isinstance(result, list):
-        result = result[0]
+        if isinstance(result, tuple):
+            result = result[1]
 
-    # ✅ CASE 3: segmented_image is PIL → convert to base64
-    if isinstance(result.get("segmented_image"), Image.Image):
-        buffered = BytesIO()
-        result["segmented_image"].save(buffered, format="PNG")
-        result["segmented_image"] = base64.b64encode(buffered.getvalue()).decode()
+        if isinstance(result, list):
+            result = result[0]
 
-    # ✅ FINAL CLEAN (VERY IMPORTANT)
-    result = clean_for_json(result)
+        if isinstance(result.get("segmented_image"), Image.Image):
+            buffered = BytesIO()
+            result["segmented_image"].save(buffered, format="PNG")
+            result["segmented_image"] = base64.b64encode(buffered.getvalue()).decode()
 
-    # ✅ DEBUG PRINT
-    print("FINAL RESPONSE:", result)
-    
-    return result
+        result = clean_for_json(result)
+
+        print("FINAL RESPONSE:", result)
+
+        return result
+
+    except Exception as e:
+        print("HF API ERROR:", str(e))
+        raise e
