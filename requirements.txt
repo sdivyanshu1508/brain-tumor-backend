@@ -1,0 +1,10 @@
+Flask
+flask-cors
+flask-session
+flask-sqlalchemy
+werkzeug
+razorpay
+gradio_client
+Pillow
+requests
+gunicorn
