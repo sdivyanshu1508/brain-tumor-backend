@@ -66,25 +66,31 @@ def clean_for_json(obj):
 def call_hf_api(image_path):
     try:
         print("CALLING HF API")
+
         client = Client("sdivyanshu1508/brain-tumor-api")
-        
+
         result = client.predict(
             image=Image.open(image_path),
             api_name="/predict"
         )
 
         print("HF RAW RESULT:", result)
+        print("TYPE:", type(result))
 
+        # ✅ Normalize structure
         if isinstance(result, tuple):
             result = result[1]
 
         if isinstance(result, list):
             result = result[0]
 
-        if isinstance(result.get("segmented_image"), Image.Image):
-            buffered = BytesIO()
-            result["segmented_image"].save(buffered, format="PNG")
-            result["segmented_image"] = base64.b64encode(buffered.getvalue()).decode()
+        # ✅ FIX: handle image safely
+        if isinstance(result, dict):
+            for key, value in result.items():
+                if isinstance(value, Image.Image):
+                    buffered = BytesIO()
+                    value.save(buffered, format="PNG")
+                    result[key] = base64.b64encode(buffered.getvalue()).decode()
 
         result = clean_for_json(result)
 
